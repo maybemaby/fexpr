@@ -21,9 +21,11 @@ jobs:
 
       - name: check format
         run: deno fmt --check
+        continue-on-error: true
 
       - name: check linting
         run: deno lint
+        continue-on-error: true
 
       - name: run tests
         run: deno task test

@@ -8,5 +8,8 @@
     "dev:dbg": "deno run --unstable --inspect-brk main.ts",
     "test": "deno test --unstable",
     "test:cover": "deno test --unstable --coverage=.codecov"
+  },
+  "fmt": {
+    "include": ["./**/*.ts"]
   }
 }
