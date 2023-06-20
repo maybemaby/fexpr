@@ -1,0 +1,12 @@
+{
+  "imports": {
+    "std/": "https://deno.land/std@0.192.0/",
+    "@/": "./"
+  },
+  "tasks": {
+    "dev": "deno run --watch --unstable main.ts",
+    "dev:dbg": "deno run --unstable --inspect-brk main.ts",
+    "test": "deno test --unstable",
+    "test:cover": "deno test --unstable --coverage=.codecov"
+  }
+}

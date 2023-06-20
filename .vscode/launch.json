@@ -1,0 +1,42 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "request": "launch",
+      "name": "Launch Program",
+      "type": "node",
+      "program": "${workspaceFolder}/main.ts",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/opt/homebrew/bin/deno",
+      "runtimeArgs": [
+        "run",
+        "--unstable",
+        "--import-map",
+        "deno.jsonc",
+        "--inspect-wait",
+        "--allow-all"
+      ],
+      "attachSimplePort": 9229
+    },
+    {
+      "request": "launch",
+      "name": "Test",
+      "type": "node",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/opt/homebrew/bin/deno",
+      "runtimeArgs": [
+        "test",
+        "--unstable",
+        "--import-map",
+        "deno.jsonc",
+        "--inspect-brk",
+        "--inspect-wait",
+        "--allow-all"
+      ],
+      "attachSimplePort": 9229
+    }
+  ]
+}

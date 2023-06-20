@@ -1,0 +1,9 @@
+{
+  "deno.enablePaths": ["./"],
+  "deno.enable": true,
+  "editor.inlayHints.enabled": "on",
+  "deno.unstable": true,
+  "deno.importMap": "deno.jsonc",
+  "deno.inlayHints.parameterTypes.enabled": true,
+  "deno.inlayHints.functionLikeReturnTypes.enabled": true
+}
