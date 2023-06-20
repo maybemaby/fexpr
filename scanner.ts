@@ -78,7 +78,7 @@ export class Scanner {
 
     // Checks for group start
     if (literal === "(") {
-      return { type: Tokens.TokenGroup, literal: literal };
+      return await this.scanGroup();
     }
 
     if (isIdentifierStart(ch[0])) {
@@ -104,6 +104,80 @@ export class Scanner {
     return {
       type: Tokens.TokenUnexpected,
       literal: literal,
+    };
+  }
+
+  async scanGroup() {
+    const sb = new StringWriter();
+
+    const firstCh = await this.reader.readByte();
+
+    if (!firstCh) {
+      throw new Error("Invalid group, empty buffer");
+    }
+
+    let openGroups = 1;
+
+    while (true) {
+      const ch = await this.reader.peek(1);
+
+      if (!ch) {
+        break;
+      }
+
+      const literal = String.fromCharCode(ch[0]);
+
+      if (literal === "(") {
+        openGroups++;
+        await sb.write(ch);
+        await this.reader.readByte();
+      } else if (isTextStart(literal)) {
+        try {
+          const textToken = await this.scanText();
+          const encoded = new TextEncoder().encode(
+            '"' + textToken.literal + '"'
+          );
+          await sb.write(encoded);
+        } catch (e) {
+          if (e instanceof TextTokenError) {
+            const token = e.token;
+            const encoded = new TextEncoder().encode(token.literal);
+            await sb.write(encoded);
+
+            throw new TextTokenError(
+              `Invalid text in group: ${token.literal}`,
+              {
+                type: Tokens.TokenGroup,
+                literal: sb.toString(),
+              }
+            );
+          }
+        }
+      } else if (literal === ")") {
+        openGroups--;
+        await this.reader.readByte();
+
+        if (openGroups <= 0) {
+          break;
+        }
+        await sb.write(ch);
+      } else {
+        await sb.write(ch);
+        await this.reader.readByte();
+      }
+    }
+
+    const stringLiteral = sb.toString();
+
+    if (String.fromCharCode(firstCh) !== "(" || openGroups > 0) {
+      throw new Error(
+        `Invalid group - missing ${openGroups} closing bracket(s)`
+      );
+    }
+
+    return {
+      type: Tokens.TokenGroup,
+      literal: stringLiteral,
     };
   }
 

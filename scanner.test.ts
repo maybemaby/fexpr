@@ -224,6 +224,49 @@ describe("Scanner", () => {
       });
     }
   });
+
+  describe("scan group", () => {
+    const passCases: [string, string | null, TokenTypes][] = [
+      [`a)`, "a", Tokens.TokenIdentifier],
+      [`(a b c)`, "a b c", Tokens.TokenGroup],
+      [`((a b c))`, "(a b c)", Tokens.TokenGroup],
+      [`((a )b c)`, "(a )b c", Tokens.TokenGroup],
+      [`("ab)("c)`, '"ab)("c', Tokens.TokenGroup],
+    ];
+
+    const failCases: [string, string | null, TokenTypes][] = [
+      [`(a b c`, null, Tokens.TokenGroup],
+      [`("ab)(c)`, null, Tokens.TokenGroup],
+    ];
+
+    for (const [input, expected, tokenExpected] of passCases) {
+      it(`Should tokenize ${input}`, async () => {
+        const scanner = new Scanner(input);
+        const token = await scanner.scan();
+        assertEquals(token.type, tokenExpected);
+
+        if (expected) {
+          assertEquals(token.literal, expected);
+        } else {
+          assertEquals(token.literal, input);
+        }
+      });
+    }
+
+    for (const [input, expected, tokenExpected] of failCases) {
+      it(`Should fail to tokenize ${input}`, async () => {
+        const scanner = new Scanner(input);
+
+        if (expected) {
+          const token = await scanner.scan();
+          assertEquals(token.type, tokenExpected);
+          assertEquals(token.literal, expected);
+        } else {
+          await assertRejects(() => scanner.scan());
+        }
+      });
+    }
+  });
 });
 
 describe("isWhitespace", () => {
