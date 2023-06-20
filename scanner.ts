@@ -98,15 +98,45 @@ export class Scanner {
     }
 
     if (isJoinStart(literal)) {
-      return {
-        type: Tokens.TokenJoin,
-        literal: literal,
-      };
+      return await this.scanJoin();
     }
 
     return {
       type: Tokens.TokenUnexpected,
       literal: literal,
+    };
+  }
+
+  async scanJoin() {
+    const sb = new StringWriter();
+
+    while (true) {
+      const ch = await this.reader.peek(1);
+
+      if (!ch) {
+        break;
+      }
+
+      const literal = String.fromCharCode(ch[0]);
+
+      if (!isJoinStart(literal)) {
+        break;
+      }
+
+      await sb.write(ch);
+      await this.reader.readByte();
+    }
+
+    const stringLiteral = sb.toString();
+
+    // Check if the string literal is a valid join operator
+    if (!Object.values(Joins).includes(stringLiteral as JoinOps)) {
+      throw new Error(`Invalid join operator: ${stringLiteral}`);
+    }
+
+    return {
+      type: Tokens.TokenJoin,
+      literal: stringLiteral,
     };
   }
 

@@ -146,7 +146,6 @@ describe("Scanner", () => {
       [String.raw`'te\'st'`, "te'st", Tokens.TokenText],
       [String.raw`"tes@#,;!@#%^'\"t"`, `tes@#,;!@#%^'"t`, Tokens.TokenText],
       [String.raw`'tes@#,;!@#%^\'"t'`, `tes@#,;!@#%^'"t`, Tokens.TokenText],
-
     ];
 
     const failCases: [string, string | null, TokenTypes][] = [];
@@ -184,6 +183,29 @@ describe("Scanner", () => {
       [`?>=`, null, Tokens.TokenSign],
       [`?<`, null, Tokens.TokenSign],
       [`?<=`, null, Tokens.TokenSign],
+    ];
+
+    const failCases: [string, string | null, TokenTypes][] = [];
+
+    for (const [input, expected, tokenExpected] of passCases) {
+      it(`Should tokenize ${input}`, async () => {
+        const scanner = new Scanner(input);
+        const token = await scanner.scan();
+        assertEquals(token.type, tokenExpected);
+
+        if (expected) {
+          assertEquals(token.literal, expected);
+        } else {
+          assertEquals(token.literal, input);
+        }
+      });
+    }
+  });
+
+  describe("scan join", () => {
+    const passCases: [string, string | null, TokenTypes][] = [
+      ["&& ||", "&&", Tokens.TokenJoin],
+      ["'||test&&'&&123", "||test&&", Tokens.TokenText],
     ];
 
     const failCases: [string, string | null, TokenTypes][] = [];
