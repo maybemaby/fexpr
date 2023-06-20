@@ -7,7 +7,7 @@ export const Joins = {
 
 export type JoinOps = (typeof Joins)[keyof typeof Joins];
 
-export const SignOps = {
+export const SignOp = {
   SignEq: "=",
   SignNeq: "!=",
   SignLike: "~",
@@ -28,7 +28,7 @@ export const SignOps = {
   SignAnyGte: "?>=",
 } as const;
 
-type SignOps = (typeof SignOps)[keyof typeof SignOps];
+export type SignOps = (typeof SignOp)[keyof typeof SignOp];
 
 export const Tokens = {
   TokenUnexpected: "unexpected",
@@ -467,5 +467,5 @@ class TextTokenError extends Error {
 }
 
 function isSignOperator(stringLiteral: string) {
-  return Object.values(SignOps).includes(stringLiteral as SignOps);
+  return Object.values(SignOp).includes(stringLiteral as SignOps);
 }

@@ -4,7 +4,6 @@ import {
   assertEquals,
   assertFalse,
   assertRejects,
-  assertThrows,
 } from "std/testing/asserts.ts";
 import { Scanner, TokenTypes, Tokens, isWhitespace } from "./scanner.ts";
 
